@@ -1,0 +1,181 @@
+﻿@page
+@model Client.Pages.MyCalculatorModel
+@{
+    ViewData["Title"] = "MyCalculator";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div id="msg"></div>
+        <div class="card">
+            <div class="card-header">
+                Perform Your Basic Arithmetic Calculation Of Two Different Numbers<br />
+                Use The Dropdown To Select Arithmetic Operation
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <input type="number" class="form-control" id="value1" placeholder="Value 1">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <select class="form-control" id="arithmeticoperation">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <input type="number" class="form-control" id="value2" placeholder="Value 2">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <h5 class="card-title form-control" id="output"></h5>
+                    </div>
+                </div>
+                <a href="#" class="btn btn-primary btnCompute">Compute</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                Calculator Logs
+            </div>
+            <div class="card-body">
+                <ul class="list-group logs"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    $(() => {
+        ArithmeticSign();        
+    });
+
+    $(document).ready(() => {
+        Showlog();
+    })
+    let sign = ["/", "*", "-", "+"];
+    function ArithmeticSign() {
+        $("#arithmeticoperation").html("");
+        sign.forEach(x => {
+            let res = `<option value="${x}">${x}</option>`;
+            $("#arithmeticoperation").append(res);
+        });
+    }
+
+    $(".btnCompute").click(() => {
+        $("#output").html("");
+        let value1 = $("#value1").val();
+        let value2 = $("#value2").val();
+        let symbol = $("#arithmeticoperation").val();
+        if (value1 == "") {
+            message("value 1 is Required");
+            return;
+        }
+        if (value2 == "") {
+            message("value 2 is Required");
+            return;
+        }
+
+        if (symbol == "/" && value1 < 1) {
+            message("value 1 must greater than zero");
+            return;
+        }
+        value1 = Number(value1);
+        value2 = Number(value2);
+
+        let result = 0;
+        switch (symbol) {
+            case '/':
+                result = value1 / value2;
+                break;
+            case '*':
+                result = value1 * value2;
+                break;
+            case '-':
+                result = value1 - value2;
+                break;
+            case '+':
+                result = value1 + value2;
+                break;
+            default:
+                message(`Sorry, this support only arithmetic.`);
+        }
+
+        $("#output").html("= " + result);
+        $("#msg").html("");
+        let res = `<li class="list-group-item">${value1 } ${ symbol } ${ value2 } = ${ result }</li>`;       
+        logCompute(`${value1} ${symbol} ${value2} = ${result}`);
+        $('.logs').append(res);
+       
+    });
+
+    const message = (msg) => $("#msg").html(`<div class="alert alert-danger" role="alert">
+            ${msg}
+        </div>`);
+    function logCompute(log) {
+        let params = {
+            Logs: log
+        }
+        let xhr = new XMLHttpRequest();
+        let url = "https://localhost:6001/Calculator";
+        xhr.open('POST', url, false);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        try {
+            xhr.send(JSON.stringify(params));
+            if (xhr.status != 200) {
+                // alert('Something went wrong try again!');            
+            } else {
+                window.scrollTo(0, 0);
+            }
+        }
+        catch (err) { // instead of onerror
+            //alert("Request failed");
+        }
+    }
+        function Showlog() {
+            
+            let xhr = new XMLHttpRequest();
+            let url = "https://localhost:6001/Calculator";
+            xhr.open('GET', url, false);
+            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            try {
+                xhr.send();
+                if (xhr.status != 200) {
+                    // alert('Something went wrong try again!');            
+                } else {
+                    var res = JSON.parse(xhr.responseText);
+                    console.log(res);
+                    logTmp(res);
+                    var data = JSON.parse(res).data;
+                    if (res.length > 0) {
+                        res.forEach(x => { console.log(x) });
+                        console.log(res);                        
+                    } else {
+                        window.scrollTo(0, 0);
+                    }
+                    
+                   
+                }
+            }
+            catch (err) { // instead of onerror
+                //alert("Request failed");
+            }
+        }
+
+    function logTmp(dataObj) {
+        $('.logs').html("");
+        dataObj.forEach(x => {
+            let res = `<li class="list-group-item">${x.logs}</li>`;
+                $('.logs').append(res);
+            });
+    }
+</script>
