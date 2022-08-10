@@ -9,8 +9,8 @@
         <div id="msg"></div>
         <div class="card">
             <div class="card-header">
-                Perform Your Basic Arithmetic Calculation Of Two Different Numbers<br />
-                Use The Dropdown To Select Arithmetic Operation
+               * Perform Your Basic Arithmetic Calculation Of Two Different Numbers<br />
+               * Use The Dropdown To Select Arithmetic Operation
             </div>
             <div class="card-body">
                 <div class="row">
@@ -54,7 +54,7 @@
 
 
     $(() => {
-        ArithmeticSign();        
+        ArithmeticSign();
     });
 
     $(document).ready(() => {
@@ -110,10 +110,10 @@
 
         $("#output").html("= " + result);
         $("#msg").html("");
-        let res = `<li class="list-group-item">${value1 } ${ symbol } ${ value2 } = ${ result }</li>`;       
+        let res = `<li class="list-group-item">${value1} ${symbol} ${value2} = ${result}</li>`;
         logCompute(`${value1} ${symbol} ${value2} = ${result}`);
         $('.logs').append(res);
-       
+
     });
 
     const message = (msg) => $("#msg").html(`<div class="alert alert-danger" role="alert">
@@ -131,7 +131,7 @@
         try {
             xhr.send(JSON.stringify(params));
             if (xhr.status != 200) {
-                // alert('Something went wrong try again!');            
+                // alert('Something went wrong try again!');
             } else {
                 window.scrollTo(0, 0);
             }
@@ -140,42 +140,42 @@
             //alert("Request failed");
         }
     }
-        function Showlog() {
-            
-            let xhr = new XMLHttpRequest();
-            let url = "https://localhost:6001/Calculator";
-            xhr.open('GET', url, false);
-            xhr.setRequestHeader("content-type", "application/json");
-            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-            try {
-                xhr.send();
-                if (xhr.status != 200) {
-                    // alert('Something went wrong try again!');            
-                } else {
-                    var res = JSON.parse(xhr.responseText);
+    function Showlog() {
+
+        let xhr = new XMLHttpRequest();
+        let url = "https://localhost:6001/Calculator";
+        xhr.open('GET', url, false);
+        xhr.setRequestHeader("content-type", "application/json");
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        try {
+            xhr.send();
+            if (xhr.status != 200) {
+                // alert('Something went wrong try again!');
+            } else {
+                var res = JSON.parse(xhr.responseText);
+                console.log(res);
+                logTmp(res);
+                var data = JSON.parse(res).data;
+                if (res.length > 0) {
+                    res.forEach(x => { console.log(x) });
                     console.log(res);
-                    logTmp(res);
-                    var data = JSON.parse(res).data;
-                    if (res.length > 0) {
-                        res.forEach(x => { console.log(x) });
-                        console.log(res);                        
-                    } else {
-                        window.scrollTo(0, 0);
-                    }
-                    
-                   
+                } else {
+                    window.scrollTo(0, 0);
                 }
-            }
-            catch (err) { // instead of onerror
-                //alert("Request failed");
+
+
             }
         }
+        catch (err) { // instead of onerror
+            //alert("Request failed");
+        }
+    }
 
     function logTmp(dataObj) {
         $('.logs').html("");
         dataObj.forEach(x => {
             let res = `<li class="list-group-item">${x.logs}</li>`;
-                $('.logs').append(res);
-            });
+            $('.logs').append(res);
+        });
     }
 </script>

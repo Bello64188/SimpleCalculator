@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,15 +23,17 @@ namespace WebApiService.Controllers
             _repository = repository;
         }
 
-        [HttpGet]      
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetLog()
         {
             var logs = _repository.GetLogs();
             return Ok(logs);
         }
 
-        [HttpPost]        
-        public IActionResult LogCompute([FromBody]Log simple)
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult LogCompute([FromBody] Log simple)
         {
             _cxt.Add(simple);
             _cxt.SaveChanges();
